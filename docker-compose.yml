@@ -1,0 +1,24 @@
+services:
+  claude-memory-postgres:
+    image: postgres:16
+    container_name: claude-memory-postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - claude_memory_pgdata:/var/lib/postgresql/data
+      - C:/Users/chris/claude-memory-backups:/backup
+    networks:
+      - n8n_default
+
+volumes:
+  claude_memory_pgdata:
+    name: claude_memory_pgdata
+
+networks:
+  n8n_default:
+    external: true
