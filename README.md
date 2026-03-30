@@ -26,7 +26,7 @@ Claude's built-in memory uses flat markdown files. They work, but they have no q
 | Orchestration | Docker Compose |
 | Workflows | n8n (self-hosted, local Docker) |
 | Hook script | Bash (`session-memory.sh`) |
-| Backup | `pg_dump` via Docker exec, daily at 3AM ET |
+| Backup | `pg_dump` via Docker exec, daily at 3PM ET (Windows Task Scheduler) |
 
 ---
 
@@ -118,7 +118,7 @@ All six workflows are active. JSON files are in the [`workflows/`](workflows/) d
 | Claude Memory - Archive | `claude-memory-archive.json` | POST | `/webhook/memory-archive` | Soft-delete a memory (sets `is_active = false`) |
 | Claude Memory - Recap | `claude-memory-recap.json` | POST | `/webhook/conversation-recap` | Save end-of-session recap |
 | Claude Memory - Session Context | `claude-memory-session-context.json` | GET | `/webhook/session-context` | Pull formatted context for injection |
-| Claude Memory - Backup | `claude-memory-backup.json` | — | Scheduled (3AM ET daily) | `pg_dump` to backup directory |
+| Claude Memory - Backup | `claude-memory-backup.json` | — | Scheduled (3PM ET daily, Windows Task Scheduler) | `pg_dump` to backup directory |
 
 ---
 
@@ -232,7 +232,7 @@ The last 7 daily backups are kept. Older files are deleted automatically.
 
 ### Backup process
 
-The scheduled n8n workflow runs daily at 3AM ET and executes:
+A Windows Task Scheduler task runs daily at 3PM ET via WSL and executes:
 
 ```bash
 pg_dump -h claude-memory-postgres -U claude_admin -d claude_memory \
